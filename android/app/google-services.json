@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "961840014666",
+    "project_id": "equirtsoft",
+    "storage_bucket": "equirtsoft.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:961840014666:android:ed3669e04592314061cdb3",
+        "android_client_info": {
+          "package_name": "com.example.equitysoft"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "961840014666-l870fbrudreotu3c3ooj28qgsuhntrns.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.equitysoft",
+            "certificate_hash": "74f07e18f9e00e1f9fcebca15a04c2a7187049dd"
+          }
+        },
+        {
+          "client_id": "961840014666-l00bo8au8va3vpvqk36se13fos96tmt7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhJcXxkDsNGI_lhwiAfxugLA9QfhJG2G0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "961840014666-l00bo8au8va3vpvqk36se13fos96tmt7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
