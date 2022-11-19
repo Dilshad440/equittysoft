@@ -8,7 +8,6 @@ import 'package:equitysoft/state/product_state.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:rxdart/subjects.dart';
 import 'package:uuid/uuid.dart';
 
 class ProductBloc {
@@ -16,20 +15,22 @@ class ProductBloc {
 
   static final ProductBloc instance = ProductBloc._();
   final _service = FirebaseService();
-  final companyName = BehaviorSubject<String>();
   final companyList = BehaviorSubject<CompanyState>();
-  final selectedCompany = BehaviorSubject<CompanyRes>();
-  final categoryName = BehaviorSubject<String>();
   final categoryList = BehaviorSubject<CompanyState>();
+  final productsList = BehaviorSubject<ProductState>();
+  final pickedImage = BehaviorSubject<List<XFile>>.seeded([]);
+  final isLoading = BehaviorSubject<bool>.seeded(false);
+  final companyName = BehaviorSubject<String>();
+  final categoryName = BehaviorSubject<String>();
+  final selectedCompany = BehaviorSubject<CompanyRes>();
   final selectedCategory = BehaviorSubject<CompanyRes>();
   final productName = BehaviorSubject<String>();
   final productDesc = BehaviorSubject<String>();
   final price = BehaviorSubject<String>();
   final qty = BehaviorSubject<String>();
-  final productsList = BehaviorSubject<ProductState>();
-  final pickedImage = BehaviorSubject<List<XFile>>();
-  final isLoading = BehaviorSubject<bool>.seeded(false);
   final List<XFile> files = [];
+  final isValidImage = BehaviorSubject<bool>.seeded(false);
+  final currentIndex = BehaviorSubject<int>.seeded(0);
 
   Future<void> addCompanies() async {
     return await _service.addCompanies(companyName.valueOrNull!);
@@ -73,16 +74,16 @@ class ProductBloc {
 
   Future<bool> addProduct() async {
     isLoading.add(true);
-    final image = await getImage();
+    final image = await fetchImages();
     final uuid = Uuid();
     final product = ProductResponse(
       name: productName.valueOrNull,
-      category: selectedCategory.valueOrNull?.category,
-      company: selectedCompany.valueOrNull?.company,
+      category: categoryName.valueOrNull,
+      company: companyName.valueOrNull,
       dec: productDesc.valueOrNull,
       id: uuid.v1(),
       price: price.valueOrNull,
-      img: [Img(url: image)],
+      img: image,
       qty: qty.valueOrNull,
     );
     return _service.addProducts(product).then(
@@ -111,7 +112,7 @@ class ProductBloc {
 
   Future<bool> updateProduct(String id) async {
     isLoading.add(true);
-    final image = await getImage();
+    final image = await fetchImages();
     final uuid = Uuid();
     var product = ProductResponse(
       name: productName.valueOrNull,
@@ -120,10 +121,13 @@ class ProductBloc {
       dec: productDesc.valueOrNull,
       id: uuid.v1(),
       price: price.valueOrNull,
-      img: [Img(url: image)],
+      img: image,
       qty: qty.valueOrNull,
     );
-    return await _service.updateProduct(product, id).then((value) => true);
+    return await _service.updateProduct(product, id).then((value) {
+      isLoading.add(false);
+      return true;
+    });
   }
 
   pickImage() async {
@@ -134,24 +138,36 @@ class ProductBloc {
         files.add(p);
         pickedImage.add(files);
       }
+      if (pickedImage.valueOrNull!.length >= 2) {
+        isValidImage.add(false);
+      }
     } else {
       print("+++++++++++ERROR PICKED IMAGE");
     }
   }
 
-  Future<String?> getImage() async {
-    String? imageUrl;
+  Future<List<Img>> fetchImages() async {
+    final uuid = Uuid().v1();
+
     final storage = FirebaseStorage.instance;
-    try {
-      Reference ref = storage.ref().child("images${DateTime.now()}");
-      for (var i in pickedImage.value) {
-        await ref.putFile(File(i.path));
-      }
-      imageUrl = await ref.getDownloadURL();
-      print(imageUrl);
-    } catch (e) {
-      isLoading.add(false);
+    List<Img> files = [];
+
+    for (var i in pickedImage.value) {
+      Reference ref = storage.ref().child(uuid);
+
+      await ref.child("images${DateTime.now()}").putFile(File(i.path));
     }
-    return imageUrl;
+
+    final result = await storage.ref().child(uuid).list();
+    final List<Reference> allFiles = result.items;
+    print(allFiles.length);
+
+    await Future.forEach<Reference>(allFiles, (file) async {
+      final String fileUrl = await file.getDownloadURL();
+      files.add(Img(url: fileUrl));
+      print('result is $fileUrl');
+    });
+
+    return files;
   }
 }

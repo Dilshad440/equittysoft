@@ -9,6 +9,7 @@ class ProductDetail extends StatelessWidget {
   ProductDetail(this.product, {Key? key}) : super(key: key);
   final ProductResponse product;
   final _bloc = ProductBloc.instance;
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -22,13 +23,44 @@ class ProductDetail extends StatelessWidget {
         children: [
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.234,
-            child: CarouselSlider(
-              items: product.img
-                  ?.map(
-                    (e) => Image.network(e.url ?? ""),
-                  )
-                  .toList(),
-              options: _carouselOptions(),
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                CarouselSlider(
+                  items: product.img
+                      ?.map(
+                        (e) => Image.network(e.url ?? ""),
+                      )
+                      .toList(),
+                  options: _carouselOptions(),
+                ),
+                Positioned(
+                  bottom: 15,
+                  child: StreamBuilder<int>(
+                    stream: _bloc.currentIndex,
+                    builder: (context, snapshot) {
+                      return Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          for (int i = 0; i < product.img!.length; i++)
+                            Padding(
+                              padding: const EdgeInsets.all(2.0),
+                              child: Container(
+                                height: 7,
+                                width: 7,
+                                decoration: BoxDecoration(
+                                    color: i == snapshot.data
+                                        ? Colors.blue
+                                        : Colors.grey,
+                                    borderRadius: BorderRadius.circular(5)),
+                              ),
+                            ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(height: 15),
@@ -47,6 +79,9 @@ class ProductDetail extends StatelessWidget {
   CarouselOptions _carouselOptions() {
     return CarouselOptions(
       height: 300,
+      onPageChanged: (index, p) {
+        _bloc.currentIndex.add(index);
+      },
       disableCenter: false,
       aspectRatio: 8 / 7,
       viewportFraction: 0.8,

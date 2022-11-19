@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equitysoft/response/company_response.dart';
 import 'package:equitysoft/response/product_response.dart';
+import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
 class FirebaseService {
@@ -14,7 +15,9 @@ class FirebaseService {
         'company': companyName,
       });
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -42,7 +45,9 @@ class FirebaseService {
         'category': categoryName,
       });
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -72,7 +77,9 @@ class FirebaseService {
     try {
       await _service.collection('product').add(product.toJson());
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -110,7 +117,9 @@ class FirebaseService {
         }
       });
     } catch (e) {
-      print(e);
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 }

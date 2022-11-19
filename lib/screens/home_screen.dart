@@ -75,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
       return Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ManageCompany(),
+            builder: (context) => const ManageCompany(),
           ));
     }
   }

@@ -30,7 +30,6 @@ class _ProductPageState extends State<ProductPage> {
         actions: [
           IconButton(
               onPressed: () {
-                // _bloc.pickedImage.valueOrNull?.clear();
                 Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -60,7 +59,7 @@ class _ProductPageState extends State<ProductPage> {
                 child: Text("Something went wrong"),
               );
             }
-            if (state!.isCompleted() && state.data!.isEmpty) {
+            if (state!.data!.isEmpty) {
               return const Center(
                 child: Text("No data found"),
               );
@@ -139,33 +138,36 @@ class _ProductPageState extends State<ProductPage> {
     );
   }
 
-  Column _contentSection(ProductResponse product) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          product.name ?? "",
-          style: TextStyle(
-              fontSize: 16,
-              color: AppColors.appTheme,
-              fontWeight: FontWeight.w700),
-        ),
-        Text(
-          product.dec ?? "",
-          maxLines: 2,
-          style: TextStyle(
-              fontSize: 14,
-              color: AppColors.appTheme,
-              fontWeight: FontWeight.w600),
-        ),
-        Text(
-          "Qty: ${product.qty}",
-          style: TextStyle(
-              fontSize: 14,
-              color: AppColors.appTheme,
-              fontWeight: FontWeight.w700),
-        ),
-      ],
+  Widget _contentSection(ProductResponse product) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            product.name ?? "",
+            style: TextStyle(
+                fontSize: 16,
+                color: AppColors.appTheme,
+                fontWeight: FontWeight.w700),
+          ),
+          Text(
+            product.dec ?? "",
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+                fontSize: 14,
+                color: AppColors.appTheme,
+                fontWeight: FontWeight.w600),
+          ),
+          Text(
+            "Qty: ${product.qty}",
+            style: TextStyle(
+                fontSize: 14,
+                color: AppColors.appTheme,
+                fontWeight: FontWeight.w700),
+          ),
+        ],
+      ),
     );
   }
 }

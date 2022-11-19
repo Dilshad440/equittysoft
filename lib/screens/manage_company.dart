@@ -24,7 +24,7 @@ class _ManageCompanyState extends State<ManageCompany> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.appTheme,
-        title: Text("Manage Company"),
+        title: const Text("Manage Company"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -65,6 +65,7 @@ class _ManageCompanyState extends State<ManageCompany> {
                 if (state?.isLoading() ?? false) {
                   return const Center(child: CircularProgressIndicator());
                 }
+
                 return Expanded(
                   child: ListView.builder(
                     shrinkWrap: true,
